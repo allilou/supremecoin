@@ -81,11 +81,13 @@ contract('SupremeCoinICO', function (accounts) {
   });
 
 */
-  it("Should log an event TokensPurchased event when a Token is Purchased", async () => {
+  it("Should log an event TokensPurchased event when Someone by Tokens", async () => {
     await delay((openingShift + 1) * 1000);
     ICOisOpen = await instance.isOpen();
 
-    let result = instance.buyTokens(alice);
+    console.log('------------ isOpen = ' + ICOisOpen);
+
+    let result = await instance.buyTokens(alice, {value: web3.utils.toWei('1', 'wei')});
 
     // console.log(result);
     
