@@ -16,7 +16,7 @@ contract('SupremeCoinICO', function (accounts) {
   const alice = accounts[1]
   const bob = accounts[2]
 
-  const openingDuration = 5; // Duraton in seconds
+  const openingDuration = 10; // Duraton in seconds
   const openingShift = 2; // Shift in seconds
 
   beforeEach(async () => {
@@ -28,14 +28,20 @@ contract('SupremeCoinICO', function (accounts) {
     rate = 1000;
     wallet = accounts[1];
 
+    token = await SupremeCoin.new({ from: owner });
+
     instance = await SupremeCoinICO.new(
       rate,
       wallet,
       openingTime,
       closingTime,
-      SupremeCoin.address);
+      token.address);
+
+      await token.addMinter(instance.address, { from: owner });
+      await token.renounceMinter({ from: owner });
   });
 
+/*
   it("Should return the correct initial values of the state variables", async () => {
     let returnedOpeningtime = await instance.openingTime();
     let returnedClosingtime = await instance.closingTime();
@@ -61,7 +67,7 @@ contract('SupremeCoinICO', function (accounts) {
     assert.equal(returnedSymbol, "SUPREME", "The Token Name Time should be " + "SUPREME");
     assert.equal(returnedDecimals, 18, "The Token Name Time should be " + 18);
   });
-/*
+
   it("Should return the correct opening and closing state given blocks timestamps", async () => {
     let ICOisOpen = await instance.isOpen();
     assert.equal(ICOisOpen, false, "The ICO shouldn't be open before openning time");
@@ -81,15 +87,17 @@ contract('SupremeCoinICO', function (accounts) {
   });
 
 */
-  it("Should log an event TokensPurchased event when Someone by Tokens", async () => {
+  it("Should log an event TokensPurchased event when Someone buy Tokens", async () => {
     await delay((openingShift + 1) * 1000);
-    ICOisOpen = await instance.isOpen();
 
+    ICOisOpen = await instance.isOpen();
     console.log('------------ isOpen = ' + ICOisOpen);
 
-    let result = await instance.buyTokens(alice, {value: web3.utils.toWei('1', 'wei')});
+    var amount = web3.utils.toWei('10', 'gwei');
 
-    // console.log(result);
+    let result = await instance.sendTransaction({from: alice, value: amount});
+
+    console.log(result);
     
     // assert.equal(ICOisOpen, true, "The ICO should be open now ");
   });
