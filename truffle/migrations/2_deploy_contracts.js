@@ -20,7 +20,8 @@ module.exports = async function(deployer, network, accounts) {
                 wallet,
                 openingTime,
                 closingTime,
-                SupremeCoin.address
+                SupremeCoin.address,
+                { gas: 5000000 }
             );
         });
 };
